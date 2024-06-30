@@ -1,24 +1,20 @@
 package ru.kata.spring.boot_security.demo.util;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
 import ru.kata.spring.boot_security.demo.models.User;
-
-import ru.kata.spring.boot_security.demo.services.RegistrationService;
-
-
+import ru.kata.spring.boot_security.demo.services.UserDetailsServiceImpl;
 @Component
 public class UserValidator implements Validator {
-    private final RegistrationService registrationService;
-
-    @Autowired
-    public UserValidator(RegistrationService registrationService) {
-        this.registrationService = registrationService;
+    private final UserDetailsServiceImpl userDetailsService;
+@Autowired
+    public UserValidator(UserDetailsServiceImpl userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
-
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -27,12 +23,13 @@ public class UserValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-
-        if (registrationService.loadUserByUsername(
-                ((User) target).getUsername()).isPresent()
-        ) {
-            errors.rejectValue("username","", "Such a person exists!");
+        User user = (User) target;
+        try {
+            userDetailsService.checkUserIfExists(user.getUsername());
+        }catch (UsernameNotFoundException ignore){
+            return;
         }
+        errors.rejectValue("username", "", "Such a user already exists!");
 
     }
 }

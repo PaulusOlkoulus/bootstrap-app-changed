@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New user</title>
+</head>
+<body>
+<form th:method="post" th:action="@{/admin/users}" th:object="${user}">
+    <label for="username">Name</label>
+    <input name="username" type="text" th:field="*{username}" id="username">
+    <div style="color: red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+    <br>
+    <label for="email">Email</label>
+    <input name="email" type="text" th:field="*{email}" id="email">
+    <div style="color: red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
+    <br>
+    <label for="password">Password</label>
+    <input name="password" type="password" th:field="*{password}" id="password">
+    <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+<!--    <p th:text="${roles}"></p>-->
+
+
+    <p th:each="role: ${roles}">
+        <input type="checkbox" th:name="${role.getName()}" th:id="${role.getName()}"/>
+        <label th:for="${role.getName()}" th:text="${role.getName()}"></label>
+    </p>
+    <div style="color: red" th:if="${isEmpty}">Необходимо выбрать хотя бы одну роль!</div>
+
+
+
+    <input type="submit" value="Добавить">
+</form>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Выйти">
+</form>
+</body>
+</html>

@@ -28,41 +28,57 @@
 <div>
 
 
-    <table >
+    <table th:if="${usersCount>0}">
         <thead>
         <tr>
             <th>ID</th>
             <th>Username</th>
-            <td>Email</td>
-            <td>Roles</td>
+
+            <td th:if="${isDetail}">Email</td>
+            <td th:if="${isDetail}">Roles</td>
 
         </tr>
         </thead>
 
         <tbody>
 
-        <tr>
+        <tr th:if="${isDetail}">
             <td th:text="${user.getId()}"></td>
             <td th:text="${user.getUsername()}"></td>
             <td th:text="${user.getEmail()}"></td>
             <td>
                 <p th:each="role: ${user.getRoles()}" th:text="${role.getName()}"></p>
             </td>
-            <td th:if="${admin}"><a th:href="@{/user/edit(id=${user.getId()})}">Изменить</a></td>
+            <td><a th:href="@{/admin/users/edit(id=${user.getId()})}">Изменить</a></td>
             <td>
-                <form th:if="${admin}" th:method="post" th:object="${user}" th:action="@{/user/delete/{id}(id=${user.getId()})}">
+                <form th:method="post" th:object="${user}" th:action="@{/admin/users/delete/{id}(id=${user.getId()})}">
                     <input type="submit" value="Удалить">
                 </form>
             </td>
         </tr>
+
+
+        <tr th:if="${!isDetail}" th:each="user : ${users}">
+
+            <td th:text="${user.getId()}"></td>
+            <td th:text="${user.getUsername()}"></td>
+            <td><a th:href="@{/admin/users/edit(id=${user.getId()})}">Изменить</a></td>
+            <td>
+                <form th:method="post" th:object="${user}" th:action="@{/admin/users/delete/{id}(id=${user.getId()})}">
+                    <input type="submit" value="Удалить">
+                </form>
+            </td>
+            <td><a th:text="подробнее" th:href="@{/admin/users(id=${user.getId()})} "></a></td>
+        </tr>
         </tbody>
 
     </table>
-
+    <div th:if="${usersCount==0}" >В БД нет пользователей!</div>
 
     <br>
     <hr>
-    <a th:if="${admin}" th:href="@{/admin/users}">К списку пользователей</a>
+    <a th:if="${!isDetail}" th:href="@{/admin/users/new}">Создать нового пользователя</a>
+    <a th:if="${isDetail}" th:href="@{/admin/users}">К списку пользователей</a>
 </div>
 <form  th:action="@{/logout}" method="post">
     <input type="submit" value="Выйти">

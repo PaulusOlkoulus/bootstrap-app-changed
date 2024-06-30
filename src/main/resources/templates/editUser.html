@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>edit user</title>
+</head>
+<body>
+<!--form for admins-->
+<form th:method="post" th:action="@{/admin/users/{id}(id=${user.getId()})}" th:object="${user}">
+    <label for="username">Name</label>
+    <input name="username" type="text" th:field="*{username}" id="username">
+    <div style="color: red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+    <br>
+    <label for="email">Email</label>
+    <input name="email" type="text" th:field="*{email}" id="email">
+    <div style="color: red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+    <br>
+    <label for="password">Password</label>
+    <input name="password" type="password" th:field="*{password}" id="password">
+    <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+    <p th:each="role: ${roles}">
+        <input type="checkbox" th:name="${role.getName()}" th:id="${role.getName()}" th:checked="${user.getRoles().contains(role)}" />
+        <label th:for="${role.getName()}" th:text="${role.getName()}"></label>
+<!--        <input th:if="${isEmpty}" type="checkbox" th:name="${role.getName()}" th:id="${role.getName()}"/>-->
+<!--        <label th:if="${isEmpty}" th:for="${role.getName()}" th:text="${role.getName()}"></label>-->
+    </p>
+    <div style="color: red" th:if="${isEmpty}">Необходимо выбрать хотя бы одну роль!</div>
+<!--    <input name="roles" type="hidden" th:field="*{roles}" th:value="*{roles}">-->
+    <input type="submit" value="Обновить">
+</form>
+
+
+
+<!--<h2 th:each="role : ${user.getRoles()}">-->
+<!--    <h4 th:text="${role.getName()}"></h4>-->
+<!--</h2>-->
+<br><br>
+<form  th:action="@{/logout}" method="post">
+    <input type="submit" value="Выйти">
+</form>
+</body>
+</html>
