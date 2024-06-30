@@ -49,8 +49,8 @@
                 <p th:each="role: ${user.getRoles()}" th:text="${role.getName()}"></p>
             </td>
             <td th:if="${admin}"><a th:href="@{/user/edit(id=${user.getId()})}">Изменить</a></td>
-            <td>
-                <form th:if="${admin}" th:method="post" th:object="${user}" th:action="@{/user/delete/{id}(id=${user.getId()})}">
+            <td th:if="${admin}">
+                <form  th:method="post" th:object="${user}" th:action="@{/user/delete/{id}(id=${user.getId()})}">
                     <input type="submit" value="Удалить">
                 </form>
             </td>

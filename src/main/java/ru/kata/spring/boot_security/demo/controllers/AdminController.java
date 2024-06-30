@@ -29,7 +29,6 @@ public class AdminController {
     private final RoleService roleService;
     private final UserValidator userValidator;
 
-
     @Autowired
     public AdminController(UserService userService, RoleService roleService, UserValidator userValidator) {
         this.userService = userService;
@@ -90,17 +89,33 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    @PostMapping("/{id}")
-    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @RequestParam Map<String, String> params, Model model) {
+
+
+    @GetMapping("/edit")
+    public String editUser(Model model,
+                           @RequestParam("id") int id) {
+
+        User user = userService.getUserDetail(id);
+        //userRolesBeforeUpdating = user.getRoles();
+        model.addAttribute("user", user);
         model.addAttribute("roles", roleService.getRoles());
         model.addAttribute("isEmpty", false);
-//        userValidator.validate(user, bindingResult);
+        return "editUser";
+    }
+
+    @PostMapping("/{id}")
+    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @RequestParam Map<String, String> params, Model model, @PathVariable("id") Integer id) {
+        model.addAttribute("roles", roleService.getRoles());
+        if(!user.getUsername().equals(userService.getUserDetail(id).getUsername())) {
+            userValidator.validate(user, bindingResult);
+        }
         List<Role> userRoles = new ArrayList<>();
         for (Role role : roleService.getRoles()) {
             if (params.containsKey(role.getName())) {
                 userRoles.add(role);
             }
         }
+        user.setRoles(userRoles);
 
         if (bindingResult.hasErrors() || userRoles.isEmpty()) {
             if (userRoles.isEmpty()) {
@@ -113,25 +128,10 @@ public class AdminController {
         return "redirect:/admin/users";
     }
 
-    @GetMapping("/edit")
-    public String editUser(Model model,
-                           @RequestParam("id") int id) {
-
-        User user = userService.getUserDetail(id);
-//        roles = user.getRoles();
-        model.addAttribute("user", user);
-        model.addAttribute("roles", roleService.getRoles());
-        model.addAttribute("isEmpty", false);
-        return "editUser";
-    }
-
 
     @PostMapping("/delete/{id}")
     public String delete(@ModelAttribute("user") User user, Principal principal) {
         userService.deleteUser(user);
         return "redirect:/admin/users";
-
     }
-
-
 }

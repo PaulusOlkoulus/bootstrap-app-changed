@@ -18,15 +18,12 @@
     <label for="password">Password</label>
     <input name="password" type="password" th:field="*{password}" id="password">
     <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
-<!--    <p th:text="${roles}"></p>-->
-
 
     <p th:each="role: ${roles}">
         <input type="checkbox" th:name="${role.getName()}" th:id="${role.getName()}"/>
         <label th:for="${role.getName()}" th:text="${role.getName()}"></label>
     </p>
     <div style="color: red" th:if="${isEmpty}">Необходимо выбрать хотя бы одну роль!</div>
-
 
 
     <input type="submit" value="Добавить">

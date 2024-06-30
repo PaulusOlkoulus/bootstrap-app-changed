@@ -13,17 +13,17 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
-//    @NotEmpty(message = "Введите имя!")
-//    @Size(min = 2, max = 255, message = "Имя должно быть в диапазоне от 2 до 255")
+    @NotEmpty(message = "Введите имя!")
+    @Size(min = 2, max = 255, message = "Имя должно быть в диапазоне от 2 до 255")
     @Column(name = "username")
     private String username;
 
-//    @Size(min=4, message="Пароль должен иметь как минимум 4 символа")
+    @Size(min=4, message="Пароль должен иметь как минимум 4 символа")
     @Column(name = "password")
     private String password;
 
-//    @NotEmpty(message = "Заполните поле email!")
-//    @Email(message = "Неверный формат email")
+    @NotEmpty(message = "Заполните поле email!")
+    @Email(message = "Неверный формат email")
     @Column(name = "email")
     private String email;
 
