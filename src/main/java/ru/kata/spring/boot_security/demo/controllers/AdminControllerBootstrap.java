@@ -49,6 +49,8 @@ public class AdminControllerBootstrap {
         model.addAttribute("users", userService.getUsers());
         model.addAttribute("usersCount", userService
                 .getUsers().size());
+        model.addAttribute("roles", roleService.getRoles());
+        model.addAttribute("isAddingUser",false);
         return "users";
     }
 
@@ -68,25 +70,39 @@ public class AdminControllerBootstrap {
     }
 
     @PostMapping()
-    public String create(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @RequestParam Map<String, String> params, Model model) {
+    public String create(@ModelAttribute("user") @Valid User user,
+                         BindingResult bindingResult,
+                         @RequestParam Map<String, String> params,
+                         Model model,
+                         Principal principal) {
+        User currentUser = userService.findByUsername(principal.getName());
+//        model.addAttribute("users", userService.getUsers());
+        model.addAttribute("thisUser", currentUser);
+        model.addAttribute("isAddingUser",true);
+        model.addAttribute("isAdmin",
+                currentUser.getRoles().stream()
+                        .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN")
+        );
         model.addAttribute("roles", roleService.getRoles());
         model.addAttribute("isEmpty", false);
-        userValidator.validate(user, bindingResult);
+
         List<Role> userRoles = new ArrayList<>();
         for (Role role : roleService.getRoles()) {
             if (params.containsKey(role.getName())) {
                 userRoles.add(role);
             }
         }
+        user.setRoles(userRoles);
+        userValidator.validate(user, bindingResult);
         if (bindingResult.hasErrors() || userRoles.isEmpty()) {
             if (userRoles.isEmpty()) {
                 model.addAttribute("isEmpty", true);
             }
-            return "newUser";
+            return "users";
         }
         user.setRoles(userRoles);
         userService.addUser(user);
-        return "redirect:/admin/users";
+        return "redirect:/main_page";
     }
 
 

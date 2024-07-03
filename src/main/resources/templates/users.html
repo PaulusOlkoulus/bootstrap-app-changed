@@ -60,17 +60,16 @@
             <div class="col-2 nav flex-column nav-pills" id="v-pills-tab" role="tablist"
                  aria-orientation="vertical">
                 <a th:if="${isAdmin}" class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" href="#v-pills-home" role="tab"
-                   aria-controls="v-pills-home" aria-selected="true">Admin</a>
-                <a class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab"
-                   aria-controls="v-pills-profile" aria-selected="false">User</a>
+                   aria-controls="v-pills-home"  aria-selected="true">Admin</a>
+                <a class="nav-link" th:classappend="${!isAdmin}?'active':''" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab"
+                   aria-controls="v-pills-profile" th:attr="aria-selected=${!isAdmin}">User</a>
             </div>
             <!--  END          GROUP Of links in the left-->
 
             <!--      START      GROUP Of Content in the right-->
             <div  class="col tab-content" id="v-pills-tabContent">
 <!--           START     CRUD OPERATIONS WITH USER-->
-                <div th:if="${isAdmin}" class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
-                     aria-labelledby="v-pills-home-tab">
+                <div th:if="${isAdmin}" class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
                     <!--               Start    SOME CONTENT FOR 1 LINK: table with users-->
                     <div class="min-vh-100 p-4" style="background-color: #F8F9FA">
                         <h1>Admin panel</h1>
@@ -78,9 +77,9 @@
                             <!--                          START  NAVIGATION LINKS-->
                             <nav class="nav nav-tabs" id="nav-tab" role="tablist">
                                 <a class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" href="#nav-home"
-                                   role="tab" aria-controls="nav-home" aria-selected="true">Users table</a>
+                                   role="tab" aria-controls="nav-home"  th:attr="aria-selected=${!isAddingUser}">Users table</a>
                                 <a class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" href="#nav-profile"
-                                   role="tab" aria-controls="nav-profile" aria-selected="false">New user</a>
+                                   role="tab" aria-controls="nav-profile" th:attr="aria-selected=${isAddingUser}" >New user</a>
                             </nav>
                             <!--                               END NAVIGATION LINKS-->
                             <div class="tab-content" id="nav-tabContent">
@@ -143,45 +142,42 @@
                                         <div class="parent container d-flex justify-content-center align-items-center h-100 mt-2"
                                              style="background-color: white">
                                             <div class="child m-3  w-25">
-                                                <form class="form" th:method="post" th:action="@{/admin/users}"
+                                                <form class="form" th:method="post" th:action="@{/main_page}"
                                                       th:object="${user}">
                                                     <label class="row justify-content-center"
                                                            for="username">Name</label>
                                                     <input class="w-100" name="username" type="text"
                                                            th:field="*{username}" id="username" placeholder="username">
-                                                    <div style="color: red" th:if="${#fields.hasErrors('username')}"
+                                                    <div class="text-center" style="color: red" th:if="${#fields.hasErrors('username')}"
                                                          th:errors="*{username}"></div>
                                                     <label class="row mt-3 justify-content-center"
                                                            for="email">Email</label>
                                                     <input class="w-100" name="email" type="email" th:field="*{email}"
                                                            id="email" placeholder="email">
-                                                    <div style="color: red" th:if="${#fields.hasErrors('email')}"
+                                                    <div class="text-center" style="color: red" th:if="${#fields.hasErrors('email')}"
                                                          th:errors="*{email}"></div>
 
                                                     <label class="row mt-3 justify-content-center" for="password">Password</label>
                                                     <input class="w-100" name="password" type="password"
                                                            th:field="*{password}"
                                                            id="password" placeholder="password">
-                                                    <div style="color: red" th:if="${#fields.hasErrors('password')}"
+                                                    <div class="text-center" style="color: red" th:if="${#fields.hasErrors('password')}"
                                                          th:errors="*{password}"></div>
 
                                                     <div class="text-center mt-3">Role</div>
                                                     <div class="scrollable-container overflow-auto">
-                                                        <div class="list-group justify-content-center">
+                                                        <div th:each="role: ${roles}" class="list-group justify-content-center">
 
                                                             <label class="list-group-item">
-                                                                <input class="form-check-input me-1" id="checkbox1"
-                                                                       type="checkbox" value="">
-                                                                Admin
+                                                                <input class="form-check-input me-1" th:id="${role.getName()}"
+                                                                       type="checkbox" th:value="${role.getName()}" >
+                                                                <span th:text="${role.getName().split('_')[1]}"/>
                                                             </label>
-                                                            <label class="list-group-item">
-                                                                <input class="form-check-input me-1" id="checkbox2"
-                                                                       type="checkbox" value="">
-                                                                User
-                                                            </label>
+
                                                         </div>
 
                                                     </div>
+                                                    <div class="text-center" style="color: red" th:if="${isEmpty}">Необходимо выбрать хотя бы одну роль!</div>
 
                                                     <div class="text-center">
                                                     <input class=" btn btn-success justify-content-center mt-3" type="submit" value="Add new user">
@@ -206,7 +202,7 @@
 
 
 <!--                START INFORMATION PAGE FOR USER-->
-                <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                <div class="tab-pane fade" th:classappend="${!isAdmin}?'show active':''" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
                     <!--                  Start  SOME CONTENT FOR 2 LINK-->
                     <div class="col min-vh-100 p-4"
                          style="background-color: #F8F9FA">
