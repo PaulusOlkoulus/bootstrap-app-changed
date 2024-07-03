@@ -23,14 +23,14 @@ import java.util.stream.Collectors;
 
 
 @Controller
-//@RequestMapping("/admin/users")
-public class AdminController {
+@RequestMapping("/main_page")
+public class AdminControllerBootstrap {
     private final UserService userService;
     private final RoleService roleService;
     private final UserValidator userValidator;
 
     @Autowired
-    public AdminController(UserService userService, RoleService roleService, UserValidator userValidator) {
+    public AdminControllerBootstrap(UserService userService, RoleService roleService, UserValidator userValidator) {
         this.userService = userService;
         this.roleService = roleService;
         this.userValidator = userValidator;
@@ -38,17 +38,17 @@ public class AdminController {
 
 
     @GetMapping()
-    public String index(Model model, @RequestParam(name = "id", required = false) Long id) {
-        if (id != null) {
-            model.addAttribute("user", userService.getUserDetail(id));
-            model.addAttribute("isDetail", true);
-            model.addAttribute("usersCount", 1);
-        } else {
-            model.addAttribute("users", userService.getUsers());
-            model.addAttribute("isDetail", false);
-            model.addAttribute("usersCount", userService
-                    .getUsers().size());
-        }
+    public String index(Model model, Principal principal) {
+        User currentUser = userService.findByUsername(principal.getName());
+        model.addAttribute("thisUser", currentUser);
+        model.addAttribute("user", new User());
+        model.addAttribute("isAdmin",
+                currentUser.getRoles().stream()
+                        .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN")
+        );
+        model.addAttribute("users", userService.getUsers());
+        model.addAttribute("usersCount", userService
+                .getUsers().size());
         return "users";
     }
 
@@ -90,7 +90,6 @@ public class AdminController {
     }
 
 
-
     @GetMapping("/edit")
     public String editUser(Model model,
                            @RequestParam("id") int id) {
@@ -114,7 +113,7 @@ public class AdminController {
             }
         }
         user.setRoles(userRoles);
-        if(!user.getUsername().equals(userService.getUserDetail(id).getUsername())) {
+        if (!user.getUsername().equals(userService.getUserDetail(id).getUsername())) {
             userValidator.validate(user, bindingResult);
         }
         if (bindingResult.hasErrors() || userRoles.isEmpty()) {
