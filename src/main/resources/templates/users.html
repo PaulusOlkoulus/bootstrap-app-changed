@@ -9,6 +9,8 @@
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous">
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
     <style>
         .scrollable-container {
             width: 100%; /* Ширина контейнера */
@@ -59,32 +61,42 @@
             <!--  START       GROUP Of links in the left-->
             <div class="col-2 nav flex-column nav-pills" id="v-pills-tab" role="tablist"
                  aria-orientation="vertical">
-                <a th:if="${isAdmin}" class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" href="#v-pills-home" role="tab"
-                   aria-controls="v-pills-home"  aria-selected="true">Admin</a>
-                <a class="nav-link" th:classappend="${!isAdmin}?'active':''" id="v-pills-profile-tab" data-bs-toggle="pill" href="#v-pills-profile" role="tab"
+                <a th:if="${isAdmin}" class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
+                   href="#v-pills-home" role="tab"
+                   aria-controls="v-pills-home" aria-selected="true">Admin</a>
+                <a class="nav-link" th:classappend="${!isAdmin}?'active':''" id="v-pills-profile-tab"
+                   data-bs-toggle="pill" href="#v-pills-profile" role="tab"
                    aria-controls="v-pills-profile" th:attr="aria-selected=${!isAdmin}">User</a>
             </div>
             <!--  END          GROUP Of links in the left-->
 
             <!--      START      GROUP Of Content in the right-->
-            <div  class="col tab-content" id="v-pills-tabContent">
-<!--           START     CRUD OPERATIONS WITH USER-->
-                <div th:if="${isAdmin}" class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+            <div class="col tab-content" id="v-pills-tabContent">
+                <!--           START     CRUD OPERATIONS WITH USER-->
+                <div th:if="${isAdmin}" class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
+                     aria-labelledby="v-pills-home-tab">
                     <!--               Start    SOME CONTENT FOR 1 LINK: table with users-->
                     <div class="min-vh-100 p-4" style="background-color: #F8F9FA">
                         <h1>Admin panel</h1>
                         <div class="row">
                             <!--                          START  NAVIGATION LINKS-->
                             <nav class="nav nav-tabs" id="nav-tab" role="tablist">
-                                <a class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" href="#nav-home"
-                                   role="tab" aria-controls="nav-home"  th:attr="aria-selected=${!isAddingUser}">Users table</a>
-                                <a class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" href="#nav-profile"
-                                   role="tab" aria-controls="nav-profile" th:attr="aria-selected=${isAddingUser}" >New user</a>
+                                <a class="nav-link" th:classappend="${!isAddingUser}?'active':''" id="nav-home-tab"
+                                   data-bs-toggle="tab" href="#nav-home"
+                                   role="tab" aria-controls="nav-home" th:attr="aria-selected=${!isAddingUser}">Users
+                                    table</a>
+                                <a class="nav-link" th:classappend="${isAddingUser}?'active':''" id="nav-profile-tab"
+                                   data-bs-toggle="tab" href="#nav-profile"
+                                   role="tab" aria-controls="nav-profile" th:attr="aria-selected=${isAddingUser}">New
+                                    user</a>
                             </nav>
                             <!--                               END NAVIGATION LINKS-->
                             <div class="tab-content" id="nav-tabContent">
-                                <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                                <div class="tab-pane fade " th:classappend="${!isAddingUser}?'show active':''"
+                                     id="nav-home" role="tabpanel"
                                      aria-labelledby="nav-home-tab">
+
+
                                     <!--                                    START TABLE FOR USERS-->
                                     <div class="row border">
                                         <h4 class="mt-2">All users</h4>
@@ -114,15 +126,212 @@
                                         </span>
                                                 </td>
                                                 <td>
-                                                    <button class="btn btn-info" type="button">Edit</button>
+                                                    <button type="button" class="btn btn-info" data-bs-toggle="modal"
+                                                            th:data-bs-target="${'#edituser'+user.getId()}">Edit
+                                                    </button>
+
+
+                                                    <!--MODAL FOR edit OPERATION-->
+
+                                                    <div class="modal fade" th:id="${'edituser'+user.getId()}"
+                                                         tabindex="-1" aria-labelledby="exampleModalLabel1"
+                                                         aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="exampleModalLabel1">
+                                                                        Edit user</h5>
+                                                                    <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="form" th:method="post"
+                                                                          th:action="@{/main_page/{id}(id=${user.getId()})}"
+                                                                          th:object="${user}">
+                                                                        <label class="row justify-content-center"
+                                                                               for="idEd">ID</label>
+                                                                        <input disabled class="w-100" name="id"
+                                                                               type="text"
+                                                                               id="idEd"
+                                                                               th:value="*{id}">
+                                                                        <div class="text-center" style="color: red"
+                                                                             th:if="${#fields.hasErrors('id')}"
+                                                                             th:errors="*{id}"></div>
+
+                                                                        <label class="row mt-3 justify-content-center"
+                                                                               for="usernameEd">Username</label>
+                                                                        <input class="w-100" name="username"
+                                                                               type="text"
+                                                                               id="usernameEd"
+                                                                               th:value="*{username}">
+                                                                        <div class="text-center" style="color: red"
+                                                                             th:if="${#fields.hasErrors('username')}"
+                                                                             th:errors="*{username}"></div>
+                                                                        <label class="row mt-3 justify-content-center"
+                                                                               for="emailEd">Email</label>
+                                                                        <input class="w-100" name="email"
+                                                                               type="email"
+                                                                               id="emailEd" th:value="*{email}">
+                                                                        <div class="text-center" style="color: red"
+                                                                             th:if="${#fields.hasErrors('email')}"
+                                                                             th:errors="*{email}"></div>
+
+                                                                        <label class="row mt-3 justify-content-center" for="passwordEd">Password</label>
+                                                                        <input class="w-100" name="passwordEd" type="password"
+                                                                               th:field="*{password}"
+                                                                               id="passwordEd" placeholder="password">
+                                                                        <div class="text-center" style="color: red"
+                                                                             th:if="${#fields.hasErrors('password')}"
+                                                                             th:errors="*{password}"></div>
+
+                                                                        <div class="text-center mt-3">Role</div>
+                                                                        <div class="scrollable-container overflow-auto"
+                                                                             style="background-color:  #F8F8F8">
+                                                                            <div th:each="role: ${roles}"
+                                                                                 class="list-group justify-content-center">
+
+                                                                                <label class="list-group-item"
+                                                                                       style="background-color:  #F8F8F8">
+                                                                                    <input th:checked="${#lists.contains(roles, role)}"
+                                                                                           class="form-check-input me-1"
+                                                                                           th:id="${role.getName()}"
+                                                                                           type="checkbox"
+                                                                                           th:value="${role.getName()}"
+                                                                                           th:name="${role.getName()}">
+                                                                                    <span th:text="${role.getName().split('_')[1]}"/>
+                                                                                </label>
+
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <div class="text-center" style="color: red" th:if="${isEmpty}">
+                                                                            Необходимо выбрать хотя бы одну роль!
+                                                                        </div>
+
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary"
+                                                                                    data-bs-dismiss="modal">Close
+                                                                            </button>
+
+                                                                            <button type="submit" class="btn btn-info">
+                                                                                Edit
+                                                                            </button>
+                                                                        </div>
+
+                                                                    </form>
+                                                                </div>
+<!--                                                                <div class="modal-footer">-->
+<!--                                                                    <button type="button" class="btn btn-secondary"-->
+<!--                                                                            data-bs-dismiss="modal">Close-->
+<!--                                                                    </button>-->
+<!--                                                                    -->
+<!--                                                                        <button type="submit" class="btn btn-info">-->
+<!--                                                                            Edit-->
+<!--                                                                        </button>-->
+<!--                                                                </div>-->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!--END MODAL FOR edit OPERATION-->
+
+
                                                 </td>
                                                 <td>
-                                                    <form>
-                                                        <!--                                                            th:method="post" th:object="${user}"-->
-                                                        <!--                                                          th:action="@{/admin/users/delete/{id}(id=${user.getId()})}"-->
+                                                    <!--                                                            th:method="post" th:object="${user}"-->
+                                                    <!--                                                          th:action="@{/admin/users/delete/{id}(id=${user.getId()})}"-->
+                                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                            th:data-bs-target="${'#deleteuser'+user.getId()}">Delete
+                                                    </button>
 
-                                                        <button type="submit" class="btn btn-danger">Delete</button>
-                                                    </form>
+                                                    <!--MODAL FOR DELETE OPERATION-->
+
+                                                    <div class="modal fade" th:id="${'deleteuser'+user.getId()}"
+                                                         tabindex="-1" aria-labelledby="exampleModalLabel"
+                                                         aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title" id="exampleModalLabel">
+                                                                        Delete user</h5>
+                                                                    <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <form class="form" th:method="post"
+                                                                          th:action="@{/main_page}"
+                                                                          th:object="${user}">
+                                                                        <label class="row justify-content-center"
+                                                                               for="idDel">ID</label>
+                                                                        <input disabled class="w-100" name="id"
+                                                                               type="text"
+                                                                               id="idDel"
+                                                                               th:value="*{id}">
+                                                                        <div class="text-center" style="color: red"
+                                                                             th:if="${#fields.hasErrors('id')}"
+                                                                             th:errors="*{id}"></div>
+
+                                                                        <label class="row mt-3 justify-content-center"
+                                                                               for="usernameDel">Name</label>
+                                                                        <input disabled class="w-100" name="username"
+                                                                               type="text"
+                                                                               id="usernameDel"
+                                                                               th:value="*{username}">
+                                                                        <div class="text-center" style="color: red"
+                                                                             th:if="${#fields.hasErrors('username')}"
+                                                                             th:errors="*{username}"></div>
+                                                                        <label class="row mt-3 justify-content-center"
+                                                                               for="emailDel">Email</label>
+                                                                        <input disabled class="w-100" name="email"
+                                                                               type="email"
+                                                                               id="emailDel" th:value="*{email}">
+                                                                        <div class="text-center" style="color: red"
+                                                                             th:if="${#fields.hasErrors('email')}"
+                                                                             th:errors="*{email}"></div>
+
+                                                                        <div class="text-center mt-3">Role</div>
+                                                                        <div class="scrollable-container overflow-auto"
+                                                                             style="background-color:  #F8F8F8">
+                                                                            <div th:each="role: ${user.getRoles()}"
+                                                                                 class="list-group justify-content-center">
+
+                                                                                <label class="list-group-item"
+                                                                                       style="background-color:  #F8F8F8">
+                                                                                    <!--                                                                                    <input disabled class="form-check-input me-1"-->
+                                                                                    <!--                                                                                           th:id="${role.getName()}"-->
+                                                                                    <!--                                                                                           type="checkbox"-->
+                                                                                    <!--                                                                                           th:value="${role.getName()}"-->
+                                                                                    <!--                                                                                           th:name="${role.getName()}">-->
+                                                                                    <span th:text="${role.getName().split('_')[1]}"/>
+                                                                                </label>
+
+                                                                            </div>
+
+                                                                        </div>
+
+                                                                    </form>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Close
+                                                                    </button>
+                                                                    <form th:method="post"
+                                                                          th:action="@{/main_page/delete/{id}(id=${user.getId()})}">
+                                                                        <button type="submit" class="btn btn-danger">
+                                                                            Delete
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <!--END MODAL FOR DELETE OPERATION-->
+
                                                 </td>
                                             </tr>
 
@@ -132,8 +341,11 @@
                                         </table>
                                     </div>
                                     <!--                                    END TABLE FOR USERS-->
+
+
                                 </div>
-                                <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                                <div class="tab-pane fade" th:classappend="${isAddingUser}?'show active':''"
+                                     id="nav-profile" role="tabpanel"
                                      aria-labelledby="nav-profile-tab">
                                     <!--       START START START                             START FORM ADDING USERS-->
                                     <div class="row border">
@@ -148,39 +360,49 @@
                                                            for="username">Name</label>
                                                     <input class="w-100" name="username" type="text"
                                                            th:field="*{username}" id="username" placeholder="username">
-                                                    <div class="text-center" style="color: red" th:if="${#fields.hasErrors('username')}"
+                                                    <div class="text-center" style="color: red"
+                                                         th:if="${#fields.hasErrors('username')}"
                                                          th:errors="*{username}"></div>
                                                     <label class="row mt-3 justify-content-center"
                                                            for="email">Email</label>
                                                     <input class="w-100" name="email" type="email" th:field="*{email}"
                                                            id="email" placeholder="email">
-                                                    <div class="text-center" style="color: red" th:if="${#fields.hasErrors('email')}"
+                                                    <div class="text-center" style="color: red"
+                                                         th:if="${#fields.hasErrors('email')}"
                                                          th:errors="*{email}"></div>
 
                                                     <label class="row mt-3 justify-content-center" for="password">Password</label>
                                                     <input class="w-100" name="password" type="password"
                                                            th:field="*{password}"
                                                            id="password" placeholder="password">
-                                                    <div class="text-center" style="color: red" th:if="${#fields.hasErrors('password')}"
+                                                    <div class="text-center" style="color: red"
+                                                         th:if="${#fields.hasErrors('password')}"
                                                          th:errors="*{password}"></div>
 
                                                     <div class="text-center mt-3">Role</div>
                                                     <div class="scrollable-container overflow-auto">
-                                                        <div th:each="role: ${roles}" class="list-group justify-content-center">
+                                                        <div th:each="role: ${roles}"
+                                                             class="list-group justify-content-center">
 
                                                             <label class="list-group-item">
-                                                                <input class="form-check-input me-1" th:id="${role.getName()}"
-                                                                       type="checkbox" th:value="${role.getName()}" >
+                                                                <input class="form-check-input me-1"
+                                                                       th:id="${role.getName()}"
+                                                                       type="checkbox" th:value="${role.getName()}"
+                                                                       th:name="${role.getName()}"
+                                                                       th:checked="${isAddingUser and user.roles.contains(role)}">
                                                                 <span th:text="${role.getName().split('_')[1]}"/>
                                                             </label>
 
                                                         </div>
 
                                                     </div>
-                                                    <div class="text-center" style="color: red" th:if="${isEmpty}">Необходимо выбрать хотя бы одну роль!</div>
+                                                    <div class="text-center" style="color: red" th:if="${isEmpty}">
+                                                        Необходимо выбрать хотя бы одну роль!
+                                                    </div>
 
                                                     <div class="text-center">
-                                                    <input class=" btn btn-success justify-content-center mt-3" type="submit" value="Add new user">
+                                                        <input class=" btn btn-success justify-content-center mt-3"
+                                                               type="submit" value="Add new user">
                                                     </div>
                                                 </form>
                                             </div>
@@ -195,14 +417,12 @@
                     </div>
                     <!--               END    SOME CONTENT FOR 1 LINK: table with users-->
                 </div>
-<!--                END CRUD OPERATIONS WITH USER-->
+                <!--                END CRUD OPERATIONS WITH USER-->
 
 
-
-
-
-<!--                START INFORMATION PAGE FOR USER-->
-                <div class="tab-pane fade" th:classappend="${!isAdmin}?'show active':''" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                <!--                START INFORMATION PAGE FOR USER-->
+                <div class="tab-pane fade" th:classappend="${!isAdmin}?'show active':''" id="v-pills-profile"
+                     role="tabpanel" aria-labelledby="v-pills-profile-tab">
                     <!--                  Start  SOME CONTENT FOR 2 LINK-->
                     <div class="col min-vh-100 p-4"
                          style="background-color: #F8F9FA">
@@ -244,9 +464,7 @@
                     </div>
                     <!--                  End  SOME CONTENT FOR 2 LINK-->
                 </div>
-<!--                END INFORMATION PAGE FOR USER-->
-
-
+                <!--                END INFORMATION PAGE FOR USER-->
 
 
             </div>
@@ -261,8 +479,58 @@
 </div>
 
 
+<!--TEST MODAL START-->
+
+<!--<a data-bs-target="#exampleModal" role="button" class="btn btn-danger" data-bs-toggle="modal">Launch demo modal</a>-->
+<!--<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
+<!--    <div class="modal-dialog">-->
+<!--        <div class="modal-content">-->
+<!--            <div class="modal-header">-->
+<!--                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>-->
+<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--            </div>-->
+<!--            <div class="modal-body">-->
+<!--                ...-->
+<!--            </div>-->
+<!--            <div class="modal-footer">-->
+<!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
+<!--                <button type="button" class="btn btn-primary">Save changes</button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--TEST MODAL END-->
+
+
+
+<!--CHECKING JAVA SCRIPA-->
+
+
+
+<!--CHECKING JAVA SCRIPA-->
+
+
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+
+
+<script th:inline="javascript" th:if="${isUpdatingUser}">
+    $(document).ready(function() {
+        /*<![CDATA[*/
+        // window.alert(/*[[${modalId}]]*/);
+        $(/*[[${modalUpdate}]]*/).modal('show');
+        /*]]>*/
+    });
+</script>
+
 </body>
 </html>

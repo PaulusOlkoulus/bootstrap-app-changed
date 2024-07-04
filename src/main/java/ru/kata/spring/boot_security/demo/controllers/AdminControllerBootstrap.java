@@ -28,46 +28,52 @@ public class AdminControllerBootstrap {
     private final UserService userService;
     private final RoleService roleService;
     private final UserValidator userValidator;
+    private List<User> usersInDb;
 
     @Autowired
     public AdminControllerBootstrap(UserService userService, RoleService roleService, UserValidator userValidator) {
         this.userService = userService;
+
         this.roleService = roleService;
         this.userValidator = userValidator;
     }
 
 
     @GetMapping()
-    public String index(Model model, Principal principal) {
+    public String index(@ModelAttribute("user") User user,
+                        Model model, Principal principal) {
         User currentUser = userService.findByUsername(principal.getName());
         model.addAttribute("thisUser", currentUser);
-        model.addAttribute("user", new User());
+
         model.addAttribute("isAdmin",
                 currentUser.getRoles().stream()
                         .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN")
         );
-        model.addAttribute("users", userService.getUsers());
+        usersInDb = userService.getUsers();
+        model.addAttribute("users", usersInDb);
         model.addAttribute("usersCount", userService
                 .getUsers().size());
         model.addAttribute("roles", roleService.getRoles());
-        model.addAttribute("isAddingUser",false);
+        model.addAttribute("isAddingUser", false);
+        model.addAttribute("isUpdatingUser", false);
+
         return "users";
     }
 
-    @GetMapping("/{id}")
-    public String getUserDetails(@ModelAttribute("user") User user,
-                                 Model model) {
-        model.addAttribute("user", userService.getUserDetail(user.getId()));
-        return "user";
-    }
-
-    @GetMapping("/new")
-    public String newUser(@ModelAttribute("user") User user,
-                          Model model) {
-        model.addAttribute("roles", roleService.getRoles());
-        model.addAttribute("isEmpty", false);
-        return "newUser";
-    }
+//    @GetMapping("/{id}")
+//    public String getUserDetails(@ModelAttribute("user") User user,
+//                                 Model model) {
+//        model.addAttribute("user", userService.getUserDetail(user.getId()));
+//        return "user";
+//    }
+//
+//    @GetMapping("/new")
+//    public String newUser(@ModelAttribute("user") User user,
+//                          Model model) {
+//        model.addAttribute("roles", roleService.getRoles());
+//        model.addAttribute("isEmpty", false);
+//        return "newUser";
+//    }
 
     @PostMapping()
     public String create(@ModelAttribute("user") @Valid User user,
@@ -76,9 +82,11 @@ public class AdminControllerBootstrap {
                          Model model,
                          Principal principal) {
         User currentUser = userService.findByUsername(principal.getName());
-//        model.addAttribute("users", userService.getUsers());
+
+        model.addAttribute("users", usersInDb);
         model.addAttribute("thisUser", currentUser);
-        model.addAttribute("isAddingUser",true);
+        model.addAttribute("isAddingUser", true);
+        model.addAttribute("isUpdatingUser", false);
         model.addAttribute("isAdmin",
                 currentUser.getRoles().stream()
                         .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN")
@@ -106,6 +114,8 @@ public class AdminControllerBootstrap {
     }
 
 
+
+
     @GetMapping("/edit")
     public String editUser(Model model,
                            @RequestParam("id") int id) {
@@ -119,9 +129,19 @@ public class AdminControllerBootstrap {
     }
 
     @PostMapping("/{id}")
-    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @RequestParam Map<String, String> params, Model model, @PathVariable("id") Integer id) {
+    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @RequestParam Map<String, String> params, Model model, @PathVariable("id") Integer id,
+                         Principal principal) {
+        User currentUser = userService.findByUsername(principal.getName());
         model.addAttribute("roles", roleService.getRoles());
+        model.addAttribute("isUpdatingUser", false);
 
+        model.addAttribute("users", usersInDb);
+        model.addAttribute("thisUser", currentUser);
+        model.addAttribute("isAddingUser", false);
+        model.addAttribute("isAdmin",
+                currentUser.getRoles().stream()
+                        .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN")
+        );
         List<Role> userRoles = new ArrayList<>();
         for (Role role : roleService.getRoles()) {
             if (params.containsKey(role.getName())) {
@@ -136,17 +156,20 @@ public class AdminControllerBootstrap {
             if (userRoles.isEmpty()) {
                 model.addAttribute("isEmpty", true);
             }
-            return "editUser";
+            String modalUpdate = "#edituser"+user.getId();
+            model.addAttribute("isUpdatingUser", true);
+            model.addAttribute("modalUpdate", modalUpdate);
+            return "users";
         }
         user.setRoles(userRoles);
         userService.update(user.getId(), user);
-        return "redirect:/admin/users";
+        return "redirect:/main_page";
     }
 
 
     @PostMapping("/delete/{id}")
     public String delete(@ModelAttribute("user") User user, Principal principal) {
         userService.deleteUser(user);
-        return "redirect:/admin/users";
+        return "redirect:/main_page";
     }
 }
