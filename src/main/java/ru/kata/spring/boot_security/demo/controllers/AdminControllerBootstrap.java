@@ -85,15 +85,15 @@ public class AdminControllerBootstrap {
                 userRoles.add(role);
             }
         }
-        user.setRoles(userRoles);
+
         userValidator.validate(user, bindingResult);
-        if (bindingResult.hasErrors() || userRoles.isEmpty()) {
-            if (userRoles.isEmpty()) {
+        if (bindingResult.hasErrors() || user.getRoles().isEmpty()) {
+            if (user.getRoles().isEmpty()) {
                 model.addAttribute("isEmpty", true);
             }
             return "users";
         }
-        user.setRoles(userRoles);
+
         userService.addUser(user);
         return "redirect:/main_page";
     }
@@ -132,13 +132,13 @@ public class AdminControllerBootstrap {
                 userRoles.add(role);
             }
         }
-        user.setRoles(userRoles);
+
         user.setPassword(params.get("passwordEd"));
         if (!user.getUsername().equals(userService.getUserDetail(id).getUsername())) {
             userValidator.validate(user, bindingResult);
         }
-        if (bindingResult.hasErrors() || userRoles.isEmpty()) {
-            if (userRoles.isEmpty()) {
+        if (bindingResult.hasErrors() || user.getRoles().isEmpty()) {
+            if (user.getRoles().isEmpty()) {
                 model.addAttribute("isEmpty", true);
             }
             String modalUpdate = "#edituser"+user.getId();
@@ -146,7 +146,7 @@ public class AdminControllerBootstrap {
             model.addAttribute("modalUpdate", modalUpdate);
             return "users";
         }
-        user.setRoles(userRoles);
+
         userService.update(user.getId(), user);
         return "redirect:/main_page";
     }

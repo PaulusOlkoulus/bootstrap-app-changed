@@ -199,26 +199,14 @@
                                                                              th:if="${#fields.hasErrors('password')}"
                                                                              th:errors="*{password}"></div>
 
-                                                                        <div class="text-center mt-3">Role</div>
-                                                                        <div class="scrollable-container overflow-auto"
-                                                                             style="background-color:  #F8F8F8">
-                                                                            <div th:each="role: ${roles}"
-                                                                                 class="list-group justify-content-center">
-
-                                                                                <label class="list-group-item"
-                                                                                       style="background-color:  #F8F8F8">
-                                                                                    <input th:checked="${#lists.contains(roles, role)}"
-                                                                                           class="form-check-input me-1"
-                                                                                           th:id="${role.getName()}"
-                                                                                           type="checkbox"
-                                                                                           th:value="${role.getName()}"
-                                                                                           th:name="${role.getName()}">
-                                                                                    <span th:text="${role.getName().split('_')[1]}"/>
-                                                                                </label>
-
-                                                                            </div>
-
-                                                                        </div>
+                                                                        <label class="row mt-3 justify-content-center" for="rolesUp">Roles</label>
+                                                                        <select class="form-select w-100"
+                                                                                multiple size="2" aria-label="roles" id="rolesUp" style="margin: auto"
+                                                                                th:field="*{roles}">
+                                                                            <th:block th:each="role:${roles}">
+                                                                                <option th:selected="${#lists.contains(user.roles, role)}" th:value="${role.getId()}" th:text="${role.getName().split('_')[1]}"></option>
+                                                                            </th:block>
+                                                                        </select>
 
                                                                         <div class="text-center" style="color: red"
                                                                              th:if="${isEmpty}">
@@ -249,8 +237,6 @@
 
                                                 </td>
                                                 <td>
-                                                    <!--                                                            th:method="post" th:object="${user}"-->
-                                                    <!--                                                          th:action="@{/admin/users/delete/{id}(id=${user.getId()})}"-->
                                                     <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                                             th:data-bs-target="${'#deleteuser'+user.getId()}">Delete
                                                     </button>
@@ -301,25 +287,14 @@
                                                                              th:if="${#fields.hasErrors('email')}"
                                                                              th:errors="*{email}"></div>
 
-                                                                        <div class="text-center mt-3">Role</div>
-                                                                        <div class="scrollable-container overflow-auto"
-                                                                             style="background-color:  #F8F8F8">
-                                                                            <div th:each="role: ${user.getRoles()}"
-                                                                                 class="list-group justify-content-center">
-
-                                                                                <label class="list-group-item"
-                                                                                       style="background-color:  #F8F8F8">
-                                                                                    <!--                                                                                    <input disabled class="form-check-input me-1"-->
-                                                                                    <!--                                                                                           th:id="${role.getName()}"-->
-                                                                                    <!--                                                                                           type="checkbox"-->
-                                                                                    <!--                                                                                           th:value="${role.getName()}"-->
-                                                                                    <!--                                                                                           th:name="${role.getName()}">-->
-                                                                                    <span th:text="${role.getName().split('_')[1]}"/>
-                                                                                </label>
-
-                                                                            </div>
-
-                                                                        </div>
+                                                                        <label class="row mt-3 justify-content-center" for="rolesDel">Roles</label>
+                                                                        <select class="form-select w-100"
+                                                                                multiple size="2" aria-label="roles" id="rolesDel" style="margin: auto"
+                                                                                th:field="*{roles}">
+                                                                            <th:block th:each="role:${roles}">
+                                                                                <option disabled th:selected="${#lists.contains(user.roles, role)}" th:value="${role.getId()}" th:text="${role.getName().split('_')[1]}"></option>
+                                                                            </th:block>
+                                                                        </select>
 
                                                                     </form>
                                                                 </div>
@@ -388,22 +363,14 @@
                                                          th:if="${#fields.hasErrors('password')}"
                                                          th:errors="*{password}"></div>
 
-                                                    <div class="text-center mt-3">Role</div>
-                                                    <div class="scrollable-container overflow-auto">
-                                                        <div th:each="role: ${roles}"
-                                                             class="list-group justify-content-center">
-                                                            <label th:id="${role.getName()}" class="list-group-item">
-                                                                <input class="form-check-input me-1"
-                                                                       th:id="${role.getName()}"
-                                                                       type="checkbox" th:value="${role.getName()}"
-                                                                       th:name="${role.getName()}"
-                                                                       th:checked="${isAddingUser and user.roles.contains(role)}">
-                                                                <span th:text="${role.getName().split('_')[1]}"/>
-                                                            </label>
-
-                                                        </div>
-
-                                                    </div>
+                                                    <label class="row mt-3 justify-content-center" for="roles">Roles</label>
+                                                    <select class="form-select w-100"
+                                                            multiple size="2" aria-label="roles" id="roles" style="margin: auto"
+                                                            th:field="*{roles}">
+                                                        <th:block th:each="role:${roles}">
+                                                            <option th:value="${role.getId()}" th:text="${role.getName().split('_')[1]}"></option>
+                                                        </th:block>
+                                                    </select>
                                                     <div class="text-center" style="color: red" th:if="${isEmpty}">
                                                         Необходимо выбрать хотя бы одну роль!
                                                     </div>
@@ -486,35 +453,6 @@
 
 </div>
 
-
-<!--TEST MODAL START-->
-
-<!--<a data-bs-target="#exampleModal" role="button" class="btn btn-danger" data-bs-toggle="modal">Launch demo modal</a>-->
-<!--<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
-<!--    <div class="modal-dialog">-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>-->
-<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--            </div>-->
-<!--            <div class="modal-body">-->
-<!--                ...-->
-<!--            </div>-->
-<!--            <div class="modal-footer">-->
-<!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>-->
-<!--                <button type="button" class="btn btn-primary">Save changes</button>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-<!--TEST MODAL END-->
-
-
-<!--CHECKING JAVA SCRIPA-->
-
-
-<!--CHECKING JAVA SCRIPA-->
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
