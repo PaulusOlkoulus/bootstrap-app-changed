@@ -18,7 +18,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -33,7 +32,6 @@ public class AdminControllerBootstrap {
     @Autowired
     public AdminControllerBootstrap(UserService userService, RoleService roleService, UserValidator userValidator) {
         this.userService = userService;
-
         this.roleService = roleService;
         this.userValidator = userValidator;
     }
@@ -60,20 +58,7 @@ public class AdminControllerBootstrap {
         return "users";
     }
 
-//    @GetMapping("/{id}")
-//    public String getUserDetails(@ModelAttribute("user") User user,
-//                                 Model model) {
-//        model.addAttribute("user", userService.getUserDetail(user.getId()));
-//        return "user";
-//    }
-//
-//    @GetMapping("/new")
-//    public String newUser(@ModelAttribute("user") User user,
-//                          Model model) {
-//        model.addAttribute("roles", roleService.getRoles());
-//        model.addAttribute("isEmpty", false);
-//        return "newUser";
-//    }
+
 
     @PostMapping()
     public String create(@ModelAttribute("user") @Valid User user,
@@ -121,7 +106,6 @@ public class AdminControllerBootstrap {
                            @RequestParam("id") int id) {
 
         User user = userService.getUserDetail(id);
-        //userRolesBeforeUpdating = user.getRoles();
         model.addAttribute("user", user);
         model.addAttribute("roles", roleService.getRoles());
         model.addAttribute("isEmpty", false);
@@ -149,6 +133,7 @@ public class AdminControllerBootstrap {
             }
         }
         user.setRoles(userRoles);
+        user.setPassword(params.get("passwordEd"));
         if (!user.getUsername().equals(userService.getUserDetail(id).getUsername())) {
             userValidator.validate(user, bindingResult);
         }

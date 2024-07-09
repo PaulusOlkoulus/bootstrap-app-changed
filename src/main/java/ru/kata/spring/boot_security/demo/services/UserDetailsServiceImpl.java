@@ -1,6 +1,5 @@
 package ru.kata.spring.boot_security.demo.services;
 
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,12 +17,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-//   private final UserDetails userDetails;
     private final UserRepository userRepository;
 
     @Autowired
     public UserDetailsServiceImpl( UserRepository userRepository) {
-//        this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
     }
 
@@ -38,8 +35,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(String.format("User '%s' not found", username));
         }
-//        Hibernate.initialize(user.getRoles());
-//        System.out.println(user.getRoles());
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),

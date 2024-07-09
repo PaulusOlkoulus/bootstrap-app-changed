@@ -19,6 +19,18 @@
             padding: 1px; /* Внутренние отступы */
             overflow-y: auto; /* Вертикальная прокрутка */
         }
+
+        /* Стили для активированного checkbox */
+
+
+        input[type=checkbox]:checked + label {
+            background-color: #0D6EFD;
+        }
+
+        .checkbox-label.checked {
+            background-color: #0D6EFD;
+            /* Цвет фона при активации checkbox */
+        }
     </style>
 </head>
 <body>
@@ -177,9 +189,11 @@
                                                                              th:if="${#fields.hasErrors('email')}"
                                                                              th:errors="*{email}"></div>
 
-                                                                        <label class="row mt-3 justify-content-center" for="passwordEd">Password</label>
-                                                                        <input class="w-100" name="passwordEd" type="password"
-                                                                               th:field="*{password}"
+                                                                        <label class="row mt-3 justify-content-center"
+                                                                               for="passwordEd">Password</label>
+                                                                        <input class="w-100" name="passwordEd"
+                                                                               type="password"
+                                                                               th:value="*{password}"
                                                                                id="passwordEd" placeholder="password">
                                                                         <div class="text-center" style="color: red"
                                                                              th:if="${#fields.hasErrors('password')}"
@@ -205,12 +219,15 @@
                                                                             </div>
 
                                                                         </div>
-                                                                        <div class="text-center" style="color: red" th:if="${isEmpty}">
+
+                                                                        <div class="text-center" style="color: red"
+                                                                             th:if="${isEmpty}">
                                                                             Необходимо выбрать хотя бы одну роль!
                                                                         </div>
 
                                                                         <div class="modal-footer">
-                                                                            <button type="button" class="btn btn-secondary"
+                                                                            <button type="button"
+                                                                                    class="btn btn-secondary"
                                                                                     data-bs-dismiss="modal">Close
                                                                             </button>
 
@@ -221,15 +238,7 @@
 
                                                                     </form>
                                                                 </div>
-<!--                                                                <div class="modal-footer">-->
-<!--                                                                    <button type="button" class="btn btn-secondary"-->
-<!--                                                                            data-bs-dismiss="modal">Close-->
-<!--                                                                    </button>-->
-<!--                                                                    -->
-<!--                                                                        <button type="submit" class="btn btn-info">-->
-<!--                                                                            Edit-->
-<!--                                                                        </button>-->
-<!--                                                                </div>-->
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -383,8 +392,7 @@
                                                     <div class="scrollable-container overflow-auto">
                                                         <div th:each="role: ${roles}"
                                                              class="list-group justify-content-center">
-
-                                                            <label class="list-group-item">
+                                                            <label th:id="${role.getName()}" class="list-group-item">
                                                                 <input class="form-check-input me-1"
                                                                        th:id="${role.getName()}"
                                                                        type="checkbox" th:value="${role.getName()}"
@@ -503,17 +511,10 @@
 <!--TEST MODAL END-->
 
 
-
 <!--CHECKING JAVA SCRIPA-->
 
 
-
 <!--CHECKING JAVA SCRIPA-->
-
-
-
-
-
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
@@ -524,13 +525,14 @@
 
 
 <script th:inline="javascript" th:if="${isUpdatingUser}">
-    $(document).ready(function() {
+    $(document).ready(function () {
         /*<![CDATA[*/
         // window.alert(/*[[${modalId}]]*/);
         $(/*[[${modalUpdate}]]*/).modal('show');
         /*]]>*/
     });
 </script>
+
 
 </body>
 </html>
