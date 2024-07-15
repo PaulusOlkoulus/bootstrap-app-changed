@@ -199,14 +199,19 @@
                                                                              th:if="${#fields.hasErrors('password')}"
                                                                              th:errors="*{password}"></div>
 
-                                                                        <label class="row mt-3 justify-content-center" for="rolesUp">Roles</label>
-                                                                        <select class="form-select w-100"
-                                                                                multiple size="2" aria-label="roles" id="rolesUp" style="margin: auto"
-                                                                                th:field="*{roles}">
+                                                                        <label class="row mt-3 justify-content-center"
+                                                                               for="rolesUp">Roles</label>
+                                                                        <select th:value="*{roles}" class="form-select w-100" name="roleIds"
+                                                                                multiple size="2" aria-label="roles"
+                                                                                id="rolesUp" style="margin: auto" >
                                                                             <th:block th:each="role:${roles}">
-                                                                                <option th:selected="${#lists.contains(user.roles, role)}" th:value="${role.getId()}" th:text="${role.getName().split('_')[1]}"></option>
+                                                                                <option th:selected="${#lists.contains(user.roles, role)}"
+                                                                                        th:value="${role.getId()}"
+                                                                                        th:text="${role.getName().split('_')[1]}"></option>
                                                                             </th:block>
                                                                         </select>
+                                                                        <div id="hiddenRoles"></div>
+
 
                                                                         <div class="text-center" style="color: red"
                                                                              th:if="${isEmpty}">
@@ -287,14 +292,20 @@
                                                                              th:if="${#fields.hasErrors('email')}"
                                                                              th:errors="*{email}"></div>
 
-                                                                        <label class="row mt-3 justify-content-center" for="rolesDel">Roles</label>
+                                                                        <label class="row mt-3 justify-content-center"
+                                                                               for="rolesDel">Roles</label>
                                                                         <select class="form-select w-100"
-                                                                                multiple size="2" aria-label="roles" id="rolesDel" style="margin: auto"
+                                                                                multiple size="2" aria-label="roles"
+                                                                                id="rolesDel" style="margin: auto"
                                                                                 th:field="*{roles}">
                                                                             <th:block th:each="role:${roles}">
-                                                                                <option disabled th:selected="${#lists.contains(user.roles, role)}" th:value="${role.getId()}" th:text="${role.getName().split('_')[1]}"></option>
+                                                                                <option disabled
+                                                                                        th:selected="${#lists.contains(user.roles, role)}"
+                                                                                        th:value="${role.getId()}"
+                                                                                        th:text="${role.getName().split('_')[1]}"></option>
                                                                             </th:block>
                                                                         </select>
+
 
                                                                     </form>
                                                                 </div>
@@ -363,12 +374,15 @@
                                                          th:if="${#fields.hasErrors('password')}"
                                                          th:errors="*{password}"></div>
 
-                                                    <label class="row mt-3 justify-content-center" for="roles">Roles</label>
+                                                    <label class="row mt-3 justify-content-center"
+                                                           for="roles">Roles</label>
                                                     <select class="form-select w-100"
-                                                            multiple size="2" aria-label="roles" id="roles" style="margin: auto"
+                                                            multiple size="2" aria-label="roles" id="roles"
+                                                            style="margin: auto"
                                                             th:field="*{roles}">
                                                         <th:block th:each="role:${roles}">
-                                                            <option th:value="${role.getId()}" th:text="${role.getName().split('_')[1]}"></option>
+                                                            <option th:value="${role.getId()}"
+                                                                    th:text="${role.getName().split('_')[1]}"></option>
                                                         </th:block>
                                                     </select>
                                                     <div class="text-center" style="color: red" th:if="${isEmpty}">
@@ -454,7 +468,6 @@
 </div>
 
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
@@ -469,6 +482,24 @@
         $(/*[[${modalUpdate}]]*/).modal('show');
         /*]]>*/
     });
+</script>
+
+<script>
+    function updateHiddenRoles() {
+        var select = document.getElementById("rolesUp");
+        var selectedOptions = Array.from(select.selectedOptions);
+        var rolesInput = document.getElementById("hiddenRoles");
+
+        rolesInput.innerHTML = ''; // Clear previous hidden inputs
+
+        selectedOptions.forEach(option => {
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "roleIds";
+            input.value = option.value;
+            rolesInput.appendChild(input);
+        });
+    }
 </script>
 
 

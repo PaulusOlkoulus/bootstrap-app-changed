@@ -10,6 +10,7 @@ import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
 
 import java.util.List;
+import java.util.Objects;
 
 /*
 Service for crud
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(long id, User user) {
         user.setId(id);
-        if (!(userRepository.getById(id).getPassword() == user.getPassword())) {
+        if (!Objects.equals(userRepository.getById(id).getPassword(), user.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         userRepository.save(user);

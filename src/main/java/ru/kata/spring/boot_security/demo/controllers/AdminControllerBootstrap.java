@@ -59,7 +59,6 @@ public class AdminControllerBootstrap {
     }
 
 
-
     @PostMapping()
     public String create(@ModelAttribute("user") @Valid User user,
                          BindingResult bindingResult,
@@ -99,8 +98,6 @@ public class AdminControllerBootstrap {
     }
 
 
-
-
     @GetMapping("/edit")
     public String editUser(Model model,
                            @RequestParam("id") int id) {
@@ -113,10 +110,11 @@ public class AdminControllerBootstrap {
     }
 
     @PostMapping("/{id}")
-    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @RequestParam Map<String, String> params, Model model, @PathVariable("id") Integer id,
+    public String update(@ModelAttribute("user") @Valid User user, BindingResult bindingResult, @RequestParam Map<String, String> params, @RequestParam(name = "roleIds", required = false) List<Long> roleIds, Model model, @PathVariable("id") Integer id,
                          Principal principal) {
         User currentUser = userService.findByUsername(principal.getName());
-        model.addAttribute("roles", roleService.getRoles());
+        List<Role> rolesUp = roleService.getRoles();
+        model.addAttribute("roles", rolesUp);
         model.addAttribute("isUpdatingUser", false);
 
         model.addAttribute("users", usersInDb);
@@ -127,12 +125,11 @@ public class AdminControllerBootstrap {
                         .map(Role::getName).collect(Collectors.toList()).contains("ROLE_ADMIN")
         );
         List<Role> userRoles = new ArrayList<>();
-        for (Role role : roleService.getRoles()) {
-            if (params.containsKey(role.getName())) {
-                userRoles.add(role);
+        if (roleIds != null)
+            for (Long roleId : roleIds) {
+                userRoles.add(roleService.getRoleById(roleId));
             }
-        }
-
+        user.setRoles(userRoles);
         user.setPassword(params.get("passwordEd"));
         if (!user.getUsername().equals(userService.getUserDetail(id).getUsername())) {
             userValidator.validate(user, bindingResult);
@@ -141,7 +138,7 @@ public class AdminControllerBootstrap {
             if (user.getRoles().isEmpty()) {
                 model.addAttribute("isEmpty", true);
             }
-            String modalUpdate = "#edituser"+user.getId();
+            String modalUpdate = "#edituser" + user.getId();
             model.addAttribute("isUpdatingUser", true);
             model.addAttribute("modalUpdate", modalUpdate);
             return "users";
